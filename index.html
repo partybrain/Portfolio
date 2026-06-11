@@ -1,0 +1,477 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Divyansh Kumar Singh | Portfolio</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <!-- Updated Fonts: Inter (Body), Outfit (Headings), JetBrains Mono (Monospace) -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;700;800&family=Outfit:wght@500;700;800;900&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #000000; /* Darker solid black for sharper minimal feel */
+            color: #a3a3a3; /* Mid-neutral grey for body text, better contrast */
+        }
+        .heading-font {
+            font-family: 'Outfit', sans-serif;
+        }
+        .mono {
+            font-family: 'JetBrains Mono', monospace;
+        }
+        /* Full-viewport background layer for Three.js engine */
+        #three-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            z-index: -1;
+            pointer-events: none;
+        }
+        /* Custom scrollbar, minimalist and sleek */
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #000000;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #222222;
+            border-radius: 12px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #ffffff;
+        }
+
+        /* Large connect text animation refined to grayscale */
+        .footer-outline-text {
+            color: transparent;
+            -webkit-text-stroke: 1.5px rgba(255, 255, 255, 0.2);
+            transition: all 0.5s ease-out;
+            cursor: default;
+            user-select: none;
+            letter-spacing: -0.05em;
+        }
+        .footer-outline-text:hover {
+            -webkit-text-stroke: 1.5px #ffffff;
+            color: #ffffff;
+            animation: textPulseGrayscale 3s infinite;
+        }
+        @keyframes textPulseGrayscale {
+            0%, 100% { -webkit-text-stroke-color: #ffffff; color: #ffffff; }
+            50% { -webkit-text-stroke-color: #f2f2f2; color: #f2f2f2; } /* Subtler light grey accent */
+        }
+        
+        /* New custom CSS for cards and tech chips */
+        .project-card {
+            background-color: rgba(10, 10, 10, 0.6);
+            backdrop-filter: blur(12px);
+            border-color: rgba(255, 255, 255, 0.04);
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.3);
+            transition: all 0.4s ease-out;
+        }
+        .project-card:hover {
+            border-color: rgba(255, 255, 255, 0.15);
+            transform: translateY(-5px);
+            box-shadow: 0 5px 25px rgba(0, 0, 0, 0.5);
+        }
+        .tech-chip {
+            color: #a3a3a3; /* Match body text grey */
+            border-color: rgba(255, 255, 255, 0.06);
+            transition: all 0.3s ease;
+        }
+        .tech-chip:hover {
+            color: #ffffff;
+            background-color: rgba(255, 255, 255, 0.05);
+            border-color: rgba(255, 255, 255, 0.1);
+        }
+        .capability-card {
+            background-color: rgba(12, 12, 12, 0.6);
+            backdrop-filter: blur(8px);
+            border-color: rgba(255, 255, 255, 0.03);
+            transition: all 0.4s ease;
+        }
+        .capability-card:hover {
+            border-color: rgba(255, 255, 255, 0.12);
+            box-shadow: 0 0 10px rgba(0,0,0,0.2);
+        }
+        .css-only-icon {
+            color: #737373; /* Neutral-500, grayscale */
+            transition: color 0.3s ease;
+        }
+        .capability-card:hover .css-only-icon {
+            color: #ffffff;
+        }
+    </style>
+</head>
+<body class="antialiased selection:bg-white selection:text-black overflow-x-hidden">
+
+    <canvas id="three-canvas"></canvas>
+
+    <header class="fixed top-0 left-0 w-full z-50 border-b border-white/[0.04] bg-black/60 backdrop-blur-lg">
+        <div class="max-w-7xl mx-auto px-6 md:px-12 h-24 flex items-center justify-between">
+            
+            <div class="flex items-center gap-4 group cursor-pointer mix-blend-difference" onclick="window.scrollTo(0,0)">
+                <div class="relative w-10 h-10 flex items-center justify-center">
+                    <div class="absolute inset-0 bg-white/5 rounded-full group-hover:scale-110 transition-transform duration-500 ease-out"></div>
+                    <div class="w-4 h-4 border-l border-t border-white rounded-full group-hover:rotate-180 transition-all duration-700 ease-in-out"></div>
+                    <div class="w-3 h-3 absolute group-hover:scale-0 border-t border-r border-white rounded-full group-hover:rotate-180 transition-all duration-700 ease-in-out"></div>
+                </div>
+                <div class="flex flex-col gap-0.5">
+                    <span class="text-white font-bold tracking-widest text-base uppercase heading-font">Divyansh</span>
+                    <span class="text-[11px] text-neutral-500 font-semibold tracking-wider">CS & AI UNDERGRAD</span>
+                </div>
+            </div>
+
+            <nav class="hidden md:flex gap-12 text-xs uppercase tracking-widest font-extrabold heading-font">
+                <a href="#work" class="text-neutral-400 hover:text-white transition-colors relative after:content-[''] after:absolute after:-bottom-2 after:left-0 after:w-0 after:h-[1px] after:bg-white hover:after:w-full after:transition-all after:duration-300">Projects</a>
+                <a href="#capabilities" class="text-neutral-400 hover:text-white transition-colors relative after:content-[''] after:absolute after:-bottom-2 after:left-0 after:w-0 after:h-[1px] after:bg-white hover:after:w-full after:transition-all after:duration-300">Skills</a>
+                <a href="#contact" class="text-white hover:text-neutral-100 transition-colors relative after:content-[''] after:absolute after:-bottom-2 after:left-0 after:w-0 after:h-[1px] after:bg-neutral-100 hover:after:w-full after:transition-all after:duration-300">Contact</a>
+            </nav>
+        </div>
+    </header>
+
+    <section class="min-h-screen w-full flex flex-col justify-center px-6 md:px-12 max-w-7xl mx-auto pt-32 relative">
+        <div class="space-y-12 max-w-5xl">
+            <h1 class="text-6xl md:text-9xl font-black tracking-tighter text-white leading-[0.9] heading-font uppercase">
+                <span class="font-extralight text-neutral-200">Building clear</span> <br class="hidden md:inline">
+                <span class="font-black text-transparent [-webkit-text-stroke:2px_rgba(255,255,255,0.2)] hover:[-webkit-text-stroke:2px_rgba(255,255,255,1)] hover:text-white transition-all duration-700">digital experiences</span> <br class="hidden md:inline">
+                <span class="font-extrabold text-neutral-100">that scale<span class="text-white">.</span></span>
+            </h1>
+
+            <p class="text-neutral-300 font-light text-2xl md:text-3xl leading-relaxed max-w-4xl pt-6">
+                I'm a frontend developer and computer science enthusiast focused on creating <span class="font-semibold text-white">intuitive user interfaces</span>, robust web applications, and seamless human-computer interactions.
+            </p>
+
+            <div class="flex flex-wrap gap-6 pt-10">
+                <a href="#work" class="bg-white text-black font-extrabold heading-font text-sm uppercase px-12 py-5 rounded-full hover:bg-neutral-200 transition-all shadow-2xl relative group overflow-hidden">
+                    <span class="relative z-10">View My Work</span>
+                    <div class="absolute inset-0 bg-neutral-800 transform scale-x-0 group-hover:scale-x-100 transition-transform duration-500 ease-out origin-left z-0"></div>
+                </a>
+                <a href="#contact" class="border border-white/20 text-white bg-white/[0.03] backdrop-blur-md font-bold heading-font text-sm uppercase px-12 py-5 rounded-full hover:bg-white/10 transition-all hover:border-white/30">
+                    Get In Touch
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <main class="max-w-7xl mx-auto px-6 md:px-12 space-y-56 pb-48">
+
+        <section id="work" class="space-y-16">
+            <div class="border-b border-white/10 pb-8 flex justify-between items-end">
+                <div class="space-y-2">
+                    <br>
+                    <span class="mono text-xs text-teal-400 uppercase tracking-widest font-bold">01 / Portfolio</span>
+                    <br>
+                    <h2 class="text-4xl md:text-5xl font-extrabold tracking-tight text-white uppercase heading-font">Selected Projects</h2>
+                </div>
+            </div>
+
+            <div class="space-y-10">
+                
+                <div class="group project-card p-10 md:p-16 rounded-[32px] border">
+                    <div class="grid grid-cols-1 lg:grid-cols-12 gap-10 items-start">
+                        <div class="lg:col-span-4 space-y-4">
+                            <span class="mono text-sm text-neutral-500 font-bold">Web Application</span>
+                            <h3 class="text-3xl md:text-4xl font-bold text-white tracking-tight heading-font group-hover:text-neutral-100 transition-colors">
+                                NeuroTrace
+                            </h3>
+                            <p class="text-neutral-500 text-xs uppercase tracking-wider font-semibold pt-1">AI Observability Dashboard</p>
+                        </div>
+                        <div class="lg:col-span-8 space-y-8">
+                            <p class="text-neutral-200 font-light text-base md:text-xl leading-relaxed">
+                                Developed an interactive JavaScript dashboard designed to monitor and visualize AI reasoning sequences. Implemented automated error handling and self-correction mechanics to gracefully manage API timeouts and formatting inconsistencies.
+                            </p>
+                            <div class="flex flex-wrap justify-between items-center gap-6 text-sm mono pt-4">
+                                <div class="flex flex-wrap gap-3 text-neutral-400">
+                                    <span class="tech-chip px-5 py-2 rounded-full border text-xs font-semibold">Vanilla JS</span>
+                                    <span class="tech-chip px-5 py-2 rounded-full border text-xs font-semibold">Data Visualization</span>
+                                    <span class="tech-chip px-5 py-2 rounded-full border text-xs font-semibold">API Integration</span>
+                                </div>
+                                <div class="flex gap-6">
+                                    <a href="https://github.com/partybrain/Neurotrace" target="_blank" rel="noopener noreferrer" class="text-white hover:text-neutral-100 uppercase font-bold tracking-wider border-b-2 border-white/20 pb-1 hover:border-white transition-all duration-300 relative group overflow-hidden">
+                                        <span class="relative z-10">View Source <span class="group-hover:translate-x-1.5 transition-transform duration-300 ease-out inline-block">&rarr;</span></span>
+                                    </a>
+                                    <a href="http://neurotrace.vercel.app/" target="_blank" rel="noopener noreferrer" class="text-white hover:text-neutral-100 uppercase font-bold tracking-wider border-b-2 border-white/20 pb-1 hover:border-white transition-all duration-300 relative group overflow-hidden">
+                                        <span class="relative z-10">Live Demo <span class="group-hover:translate-x-1.5 transition-transform duration-300 ease-out inline-block">&rarr;</span></span>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="group project-card p-10 md:p-16 rounded-[32px] border">
+                    <div class="grid grid-cols-1 lg:grid-cols-12 gap-10 items-start">
+                        <div class="lg:col-span-4 space-y-4">
+                            <span class="mono text-sm text-neutral-500 font-bold">Accessibility & UI</span>
+                            <h3 class="text-3xl md:text-4xl font-bold text-white tracking-tight heading-font group-hover:text-neutral-100 transition-colors">
+                                Kinetic Motion
+                            </h3>
+                            <p class="text-neutral-500 text-xs uppercase tracking-wider font-semibold pt-1">Gesture-Based Interface Prototype</p>
+                        </div>
+                        <div class="lg:col-span-8 space-y-6">
+                            <p class="text-neutral-200 font-light text-base md:text-lg leading-relaxed">
+                                Created a hands-free navigation prototype that maps physical head movements to web browsing actions. Focused on improving accessibility for short-form media applications by translating real-time webcam data into seamless UI interactions.
+                            </p>
+                            <div class="flex flex-wrap justify-between items-center gap-6 text-sm mono pt-4">
+                                <div class="flex flex-wrap gap-3 text-neutral-400">
+                                    <span class="tech-chip px-5 py-2 rounded-full border text-xs font-semibold">HCI</span>
+                                    <span class="tech-chip px-5 py-2 rounded-full border text-xs font-semibold">Computer Vision</span>
+                                    <span class="tech-chip px-5 py-2 rounded-full border text-xs font-semibold">Accessibility</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="group project-card p-10 md:p-16 rounded-[32px] border">
+                    <div class="grid grid-cols-1 lg:grid-cols-12 gap-10 items-start">
+                        <div class="lg:col-span-4 space-y-4">
+                            <span class="mono text-sm text-neutral-500 font-bold">Frontend Development</span>
+                            <h3 class="text-3xl md:text-4xl font-bold text-white tracking-tight heading-font group-hover:text-neutral-100 transition-colors">
+                                Agent Interface
+                            </h3>
+                            <p class="text-neutral-500 text-xs uppercase tracking-wider font-semibold pt-1">Responsive Chat Layout</p>
+                        </div>
+                        <div class="lg:col-span-8 space-y-6">
+                            <p class="text-neutral-200 font-light text-base md:text-lg leading-relaxed">
+                                Designed and coded a high-density, responsive chat environment optimized for streaming AI responses. Built from the ground up using semantic HTML5 and modern CSS Grid/Flexbox to ensure readability and performance across all devices.
+                            </p>
+                            <div class="flex flex-wrap justify-between items-center gap-6 text-sm mono pt-4">
+                                <div class="flex flex-wrap gap-3 text-neutral-400">
+                                    <span class="tech-chip px-5 py-2 rounded-full border text-xs font-semibold">HTML5/CSS3</span>
+                                    <span class="tech-chip px-5 py-2 rounded-full border text-xs font-semibold">Responsive Design</span>
+                                    <span class="tech-chip px-5 py-2 rounded-full border text-xs font-semibold">Tailwind CSS</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+        <section id="capabilities" class="grid grid-cols-1 lg:grid-cols-12 gap-16 items-start">
+            
+            <div class="lg:col-span-5 space-y-6 lg:sticky lg:top-36">
+                <span class="mono text-xs text-teal-400 uppercase tracking-widest block font-bold">02 / Profile</span>
+                <h2 class="text-4xl font-black text-white uppercase tracking-tight heading-font">
+                    Core Skills & <br>
+                    Focus Areas<span class="text-neutral-100">.</span>
+                </h2>
+                <p class="text-neutral-300 font-light text-lg leading-relaxed">
+                    Currently pursuing a B.Tech in Computer Science and Artificial Intelligence (2025 — 2029). My primary focus is on building clean web architectures, writing maintainable code, and creating engaging user experiences.
+                </p>
+            </div>
+
+            <div class="lg:col-span-7 grid grid-cols-1 sm:grid-cols-2 gap-8 pt-4">
+                
+                <div class="capability-card p-10 rounded-[28px] border space-y-4">
+                    <div class="relative w-8 h-8 flex items-center justify-center">
+                        <div class="absolute inset-0 bg-white/5 rounded-full"></div>
+                        <div class="w-2.5 h-2.5 border border-white rotate-45 group-hover:bg-white group-hover:w-3.5 transition-all"></div>
+                        <div class="w-1 h-3.5 bg-white scale-y-0 group-hover:scale-y-100 transition-all origin-bottom"></div>
+                    </div>
+                    <div class="text-white font-bold tracking-tight text-xl heading-font uppercase pt-2 group-hover:text-neutral-100 transition-colors">Frontend Engineering</div>
+                    <p class="text-neutral-300 font-light text-base leading-relaxed">
+                        Strong foundation in semantic HTML5, modern CSS3, Tailwind CSS, and building responsive, accessible web layouts.
+                    </p>
+                </div>
+
+                <div class="capability-card p-10 rounded-[28px] border space-y-4 relative">
+                    <div class="relative w-8 h-8 flex items-center justify-center">
+                        <div class="absolute inset-0 bg-white/5 rounded-full"></div>
+                        <div class="w-3.5 h-3.5 absolute border-r border-t border-white rounded-full rotate-45 css-only-icon"></div>
+                        <div class="w-4 h-1 absolute bg-white scale-x-0 group-hover:scale-x-100 transition-all"></div>
+                    </div>
+                    <div class="text-white font-bold tracking-tight text-xl heading-font uppercase pt-2 group-hover:text-neutral-100 transition-colors">JavaScript & Logic</div>
+                    <p class="text-neutral-300 font-light text-base leading-relaxed">
+                        Proficient in Vanilla JavaScript for DOM manipulation, asynchronous programming, API integration, and interactive UI states.
+                    </p>
+                </div>
+
+                <div class="capability-card p-10 rounded-[28px] border space-y-4">
+                    <div class="relative w-8 h-8 flex items-center justify-center">
+                        <div class="absolute inset-0 bg-white/5 rounded-full"></div>
+                        <div class="w-3.5 h-3.5 absolute border border-white rotate-45 scale-100 group-hover:scale-50 transition-all"></div>
+                        <div class="w-1 h-4 absolute bg-white scale-y-0 group-hover:scale-y-100 transition-all"></div>
+                        <div class="w-4 h-1 absolute bg-white scale-x-0 group-hover:scale-x-100 transition-all"></div>
+                    </div>
+                    <div class="text-white font-bold tracking-tight text-xl heading-font uppercase pt-2 group-hover:text-neutral-100 transition-colors">Development Workflow</div>
+                    <p class="text-neutral-300 font-light text-base leading-relaxed">
+                        Experienced with Git version control, collaborative GitHub environments, rapid prototyping, and responsive testing.
+                    </p>
+                </div>
+
+                <div class="capability-card p-10 rounded-[28px] border space-y-4">
+                    <div class="relative w-8 h-8 flex items-center justify-center">
+                        <div class="absolute inset-0 bg-white/5 rounded-full"></div>
+                        <div class="w-2.5 h-2.5 border border-white rotate-45 scale-100 group-hover:scale-125 group-hover:rounded-full transition-all"></div>
+                        <div class="w-4 h-4 rounded-full border border-white scale-0 group-hover:scale-100 transition-all"></div>
+                    </div>
+                    <div class="text-white font-bold tracking-tight text-xl heading-font uppercase pt-2 group-hover:text-neutral-100 transition-colors">Communication</div>
+                    <p class="text-neutral-300 font-light text-base leading-relaxed">
+                        Fluent in English and Hindi, with foundational knowledge of French, enabling clear documentation and team collaboration.
+                    </p>
+                </div>
+
+            </div>
+        </section>
+
+    </main>
+
+    <footer id="contact" class="relative border-t border-white/10 pt-32 pb-16 overflow-hidden bg-black backdrop-blur-sm">
+        <div class="max-w-7xl mx-auto px-6 md:px-12 space-y-24">
+            
+            <div class="flex flex-col items-center justify-center text-center space-y-12 relative z-10">
+                <h2 class="text-[12vw] leading-none font-black footer-outline-text heading-font uppercase">
+                    Connect
+                </h2>
+                
+                <a href="mailto:openview84@gmail.com" class="group relative inline-flex items-center gap-6 text-white text-3xl md:text-4xl font-extrabold heading-font mt-10 p-6 rounded-full border border-white/10 hover:border-white transition-all duration-300 bg-white/5 hover:bg-neutral-800">
+                    <span>openview84@gmail.com</span>
+                    <span class="group-hover:translate-x-3 transition-transform duration-300 ease-out text-white">&rarr;</span>
+                    <div class="absolute bottom-0 left-0 w-0 h-[2px] bg-white group-hover:w-full transition-all duration-700 ease-out"></div>
+                </a>
+            </div>
+
+            <div class="border-t border-white/5 pt-12 flex flex-col md:flex-row justify-between items-start md:items-center gap-8 mix-blend-difference">
+                <div class="flex flex-col gap-2">
+                    <span class="text-white font-bold tracking-widest text-base heading-font uppercase">Divyansh</span>
+                    <p class="text-neutral-400 font-light text-sm max-w-sm">A student building the future, one interface at a time. Always open to new challenges and collaborative learning.</p>
+                </div>
+                <div class="flex flex-wrap gap-12 text-sm heading-font uppercase tracking-wider font-extrabold text-neutral-400">
+                    <a href="mailto:openview84@gmail.com" class="hover:text-white transition-colors">Email</a>
+                    <a href="https://github.com/partybrain" target="_blank" rel="noopener noreferrer" class="hover:text-white transition-colors">GitHub</a>
+                    <a href="https://www.linkedin.com/in/party-brain-081264414" target="_blank" rel="noopener noreferrer" class="hover:text-white transition-colors">LinkedIn</a>
+                </div>
+            </div>
+
+            <div class="mt-20 flex flex-col sm:flex-row justify-between items-center text-sm font-medium text-neutral-600 border-t border-white/[0.04] pt-10 gap-6">
+                <div class="mono text-xs tracking-widest">&copy; 2026 DIVYANSH KUMAR SINGH._.</div>
+                <div class="flex gap-10 text-xs font-semibold heading-font text-neutral-600">
+                    <!-- <span class="uppercase tracking-widest">Dark Minimal</span> -->
+                    <!-- <span class="uppercase tracking-widest">Built in India</span> -->
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        let scene, camera, renderer, particleWave;
+        let width = window.innerWidth;
+        let height = window.innerHeight;
+        let clock = new THREE.Clock();
+
+        // Wave grid configuration
+        const AMOUNT_X = 120;
+        const AMOUNT_Z = 40;
+        const SEPARATION = 6;
+
+        // Interaction coordinates
+        let mouseX = 0;
+        let mouseY = 0;
+
+        function initWebGLCore() {
+            const canvasContainer = document.getElementById('three-canvas');
+            scene = new THREE.Scene();
+            
+            // Camera setup
+            camera = new THREE.PerspectiveCamera(60, width / height, 1, 2000);
+            camera.position.set(0, 50, 150);
+            camera.lookAt(0, 0, 0);
+
+            renderer = new THREE.WebGLRenderer({ canvas: canvasContainer, antialias: true, alpha: true });
+            renderer.setSize(width, height);
+            renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+
+            // Generate particle grid
+            const numParticles = AMOUNT_X * AMOUNT_Z;
+            const positions = new Float32Array(numParticles * 3);
+            
+            let i = 0;
+            for (let ix = 0; ix < AMOUNT_X; ix++) {
+                for (let iz = 0; iz < AMOUNT_Z; iz++) {
+                    positions[i] = ix * SEPARATION - ((AMOUNT_X * SEPARATION) / 2);
+                    positions[i + 1] = 0; 
+                    positions[i + 2] = iz * SEPARATION - ((AMOUNT_Z * SEPARATION) / 2);
+                    i += 3;
+                }
+            }
+
+            const geometry = new THREE.BufferGeometry();
+            geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+
+            const material = new THREE.PointsMaterial({
+                color: 0xffffff,
+                size: 1.2,
+                transparent: true,
+                opacity: 0.3,
+                sizeAttenuation: true
+            });
+
+            particleWave = new THREE.Points(geometry, material);
+            
+            // Position the wave canopy overhead
+            particleWave.position.y = 100;
+            particleWave.position.z = -50;
+            particleWave.rotation.x = 1.3;
+            
+            scene.add(particleWave);
+
+            // Event listeners
+            window.addEventListener('mousemove', trackCursorVector);
+            window.addEventListener('resize', handleResize);
+            
+            animate();
+        }
+
+        function trackCursorVector(event) {
+            mouseX = (event.clientX - width / 2) * 0.05;
+            mouseY = (event.clientY - height / 2) * 0.05;
+        }
+
+        function handleResize() {
+            width = window.innerWidth;
+            height = window.innerHeight;
+
+            camera.aspect = width / height;
+            camera.updateProjectionMatrix();
+
+            renderer.setSize(width, height);
+        }
+
+        function animate() {
+            requestAnimationFrame(animate);
+
+            const elapsedTime = clock.getElapsedTime();
+            const positions = particleWave.geometry.attributes.position.array;
+
+            // Animate wave math
+            let i = 0;
+            for (let ix = 0; ix < AMOUNT_X; ix++) {
+                for (let iz = 0; iz < AMOUNT_Z; iz++) {
+                    positions[i + 1] = (Math.sin((ix + elapsedTime * 2) * 0.15) * 8) + 
+                                       (Math.sin((iz + elapsedTime * 2) * 0.15) * 8);
+                    i += 3;
+                }
+            }
+            particleWave.geometry.attributes.position.needsUpdate = true;
+
+            // Subtle mouse interaction
+            particleWave.rotation.y = mouseX * 0.02;
+            particleWave.rotation.x = 1.3 + (mouseY * 0.02);
+
+            renderer.render(scene, camera);
+        }
+
+        document.addEventListener('DOMContentLoaded', initWebGLCore);
+    </script>
+</body>
+</html>
